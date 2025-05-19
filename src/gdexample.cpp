@@ -8,7 +8,8 @@ void GDExample::_bind_methods() {
 }
 
 void GDExample::_enter_tree() {
-    add_tool_menu_item("Export Scene", callable_mp(this, &GDExample::_export_scene));
+    Callable method = Callable(this, "_export_scene");
+    add_tool_menu_item("Export Scene", method);
 }
 
 void GDExample::_exit_tree() {
