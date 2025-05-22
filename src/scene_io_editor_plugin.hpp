@@ -2,6 +2,7 @@
 #define SCENE_IO_EDITOR_PLUGIN_H
 
 #include "export_scene_context_menu_plugin.hpp"
+#include "import_scene_context_menu_plugin.hpp"
 
 #include <godot_cpp/classes/editor_plugin.hpp>
 
@@ -12,6 +13,7 @@ class SceneIOEditorPlugin : public EditorPlugin {
 
 private:
 	Ref<ExportSceneContextMenuPlugin> export_scene_context_menu_plugin;
+	Ref<ImportSceneContextMenuPlugin> import_scene_context_menu_plugin;
 
 protected:
 	static void _bind_methods() {};

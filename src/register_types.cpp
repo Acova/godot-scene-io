@@ -3,6 +3,7 @@
 #include "export_scene_context_menu_plugin.hpp"
 #include "exported_scene_resource.hpp"
 #include "exported_scene_resource_format_loader.hpp"
+#include "import_scene_context_menu_plugin.hpp"
 #include "scene_io_editor_plugin.hpp"
 
 #include <gdextension_interface.h>
@@ -26,6 +27,7 @@ void initialize_module(ModuleInitializationLevel p_level) {
 	ResourceLoader::get_singleton()->add_resource_format_loader(exported_scene_resource_format_loader);
 
 	GDREGISTER_CLASS(ExportSceneContextMenuPlugin);
+	GDREGISTER_CLASS(ImportSceneContextMenuPlugin);
 	GDREGISTER_CLASS(SceneIOEditorPlugin);
 	EditorPlugins::add_by_type<SceneIOEditorPlugin>();
 }

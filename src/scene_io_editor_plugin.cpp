@@ -6,10 +6,14 @@ using namespace godot;
 void SceneIOEditorPlugin::_enter_tree() {
     export_scene_context_menu_plugin.instantiate();
     add_context_menu_plugin(EditorContextMenuPlugin::CONTEXT_SLOT_FILESYSTEM, export_scene_context_menu_plugin);
+
+    import_scene_context_menu_plugin.instantiate();
+    add_context_menu_plugin(EditorContextMenuPlugin::CONTEXT_SLOT_FILESYSTEM, import_scene_context_menu_plugin);
 }
 
 void SceneIOEditorPlugin::_exit_tree() {
     remove_context_menu_plugin(export_scene_context_menu_plugin);
+    remove_context_menu_plugin(import_scene_context_menu_plugin);
 }
 
 SceneIOEditorPlugin::SceneIOEditorPlugin() {

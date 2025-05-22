@@ -14,21 +14,6 @@ void ExportSceneContextMenuPlugin::_bind_methods() {
     ClassDB::bind_method(D_METHOD("export_scene"), &ExportSceneContextMenuPlugin::export_scene);
 }
 
-bool should_show_export_option(const PackedStringArray &p_paths) {
-    if (p_paths.size() != 1) {
-        return false;
-    }
-
-    String file_path = p_paths.get(0);
-    String extension = file_path.get_extension();
-    if (extension != "tscn" && extension != "scn") {
-        return false;
-    }
-
-    Ref<PackedScene> scene = ResourceLoader::get_singleton()->load(file_path);
-    return scene.is_valid();
-}
-
 void _get_dependencies_for_path_recursive(const String &p_path, PackedStringArray &r_collected_paths, PackedStringArray &r_visited_paths) {
     if (
         r_visited_paths.has(p_path)
@@ -53,19 +38,6 @@ void _get_dependencies_for_path_recursive(const String &p_path, PackedStringArra
     }
 
     // TODO: For now, we will only copy the basic dependencies
-    // Now, we try to find the more complex dependencies
-    // Ref<Resource> resource = ResourceLoader::get_singleton()->load(p_path, "", ResourceLoader::CACHE_MODE_IGNORE);
-    // if (resource.is_valid()) {
-    //     TypedArray<Dictionary> property_list = resource->get_property_list();
-    //     for (int i = 0; i < property_list.size(); ++i) {
-    //         Dictionary property = property_list[i];
-    //         String property_name = property["name"];
-    //         Variant value = resource->get(property_name);
-    //         if (value.get_type() == Variant::OBJECT) {
-    //             // Add logic to copy these resources
-    //         }
-    //     }
-    // }
 }
 
 PackedStringArray _get_dependencies_for_path(const String &p_path) {
@@ -105,6 +77,21 @@ void ExportSceneContextMenuPlugin::export_scene(const PackedStringArray &p_paths
     }
     
     zip_packer->close();
+}
+
+bool should_show_export_option(const PackedStringArray &p_paths) {
+    if (p_paths.size() != 1) {
+        return false;
+    }
+
+    String file_path = p_paths.get(0);
+    String extension = file_path.get_extension();
+    if (extension != "tscn" && extension != "scn") {
+        return false;
+    }
+
+    Ref<PackedScene> scene = ResourceLoader::get_singleton()->load(file_path);
+    return scene.is_valid();
 }
 
 void ExportSceneContextMenuPlugin::_popup_menu(const PackedStringArray &p_paths) {
