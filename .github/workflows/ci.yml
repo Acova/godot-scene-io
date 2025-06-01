@@ -1,0 +1,88 @@
+name: Extension Build
+on:
+  workflow_call:
+    inputs:
+      godot-scene-io:
+        description: Push to the master branch of the SceneIO repository
+        type: string
+        default: main
+
+  workflow_dispatch:
+    inputs:
+      godot-scene-io:
+        description: Push to the master branch of the SceneIO repository
+        type: string
+        default: main
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux (x86_64, debug)
+            os: ubuntu-22.04
+            platform: linux
+            target: template_debug
+            arch: x86_64
+
+          - name: Linux (x86_64, editor)
+            os: ubuntu-22.04
+            platform: linux
+            target: editor
+            arch: x86_64
+
+          - name: Linux (arm64, debug)
+            os: ubuntu-22.04
+            platform: linux
+            target: template_debug
+            arch: arm64
+
+          - name: Linux (arm64, editor)
+            os: ubuntu-22.04
+            platform: linux
+            target: editor
+            arch: arm64
+
+          - name: Windows (x86_64, debug)
+            os: windows-latest
+            platform: windows
+            target: template_debug
+            arch: x86_64
+
+          - name: Windows (x86_64, editor)
+            os: windows-latest
+            platform: windows
+            target: editor
+            arch: x86_64
+            
+          - name: macOS (universal, debug)
+            os: macos-latest
+            platform: macos
+            target: template_debug
+            arch: universal
+
+          - name: macOS (universal, editor)
+            os: macos-latest
+            platform: macos
+            target: editor
+            arch: universal
+    
+    env:
+      output: libsceneio.${{matrix.platform}}.${{matrix.target}}.${{matrix.arch}}
+    
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Clone godot-cpp
+        uses: actions/checkout@v4
+        with:
+          repository: godotengine/godot-cpp
+          fetch-tags: true
+          path: godot-cpp
+          ref: 4.4
