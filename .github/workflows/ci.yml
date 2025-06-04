@@ -41,12 +41,14 @@ jobs:
             platform: windows
             target: template_debug
             arch: x86_64
+            flags: use_mingw=true
 
           - name: Windows (x86_64, editor)
             os: windows-latest
             platform: windows
             target: editor
             arch: x86_64
+            flags: use_mingw=true
             
           - name: macOS (universal, debug)
             os: macos-latest
@@ -59,9 +61,6 @@ jobs:
             platform: macos
             target: editor
             arch: universal
-    
-    env:
-      output: libsceneio.${{matrix.platform}}.${{matrix.target}}.${{matrix.arch}}
     
     steps:
       - name: Checkout the repository
@@ -76,3 +75,20 @@ jobs:
           fetch-tags: true
           path: godot-cpp
           ref: 4.4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+          architecture: "x64"
+
+      - name: Set up scons
+        run: |
+          python -c "import sys; print(sys.version)"
+          python -m pip install scons==4.4.0
+      
+      - name: Set up MinGW
+        uses: egor-tensin/setup-mingw@v2
+
+      - name: Build the extension
+        run: scons platform=${{matrix.platform}} target=${{matrix.target}} ${{matrix.flags}}
