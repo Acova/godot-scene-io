@@ -81,7 +81,7 @@ jobs:
       - name: Create the Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: godot-scene-io.${{matrix.platform}}.${{matrix.arch}}
+          name: godot-scene-io.${{matrix.platform}}.${{matrix.arch}}.${{matrix.target}}
           path: addons
   
   merge:
