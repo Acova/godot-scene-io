@@ -77,3 +77,9 @@ jobs:
 
       - name: Build the extension
         run: scons platform=${{matrix.platform}} target=${{matrix.target}} arch=${{matrix.arch}} ${{matrix.flags}}
+      
+      - name: Package the Extension
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-scene-io.${{matrix.platform}}.${{matrix.arch}}
+          path: addons/
