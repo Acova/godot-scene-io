@@ -82,7 +82,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: godot-scene-io.${{matrix.platform}}.${{matrix.arch}}.${{matrix.target}}
-          path: addons
+          path: out
   
   merge:
     name: Merge the artifacts
