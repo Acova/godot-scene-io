@@ -88,4 +88,4 @@ jobs:
           python -m pip install scons==4.4.0
 
       - name: Build the extension
-        run: scons platform=${{matrix.platform}} target=${{matrix.target}} archh=${{matrix.arch}} ${{matrix.flags}}
+        run: scons platform=${{matrix.platform}} target=${{matrix.target}} arch=${{matrix.arch}} ${{matrix.flags}}
