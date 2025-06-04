@@ -78,8 +78,18 @@ jobs:
       - name: Build the extension
         run: scons platform=${{matrix.platform}} target=${{matrix.target}} arch=${{matrix.arch}} ${{matrix.flags}}
       
-      - name: Package the Extension
+      - name: Create the Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: godot-scene-io.${{matrix.platform}}.${{matrix.arch}}
-          path: addons/
+          path: addons
+  
+  merge:
+    name: Merge the artifacts
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Merge the artifacts
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: godot-scene-io

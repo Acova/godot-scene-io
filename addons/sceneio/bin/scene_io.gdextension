@@ -13,6 +13,3 @@ windows.x86_64.editor = "res://addons/sceneio/bin/libsceneio.windows.editor.x86_
 
 linux.x86_64.debug = "res://addons/sceneio/bin/libsceneio.linux.template_debug.x86_64.so"
 linux.x86_64.editor = "res://addons/sceneio/bin/libsceneio.linux.editor.x86_64.so"
-
-linux.arm64.debug = "res://addons/sceneio/bin/libsceneio.linux.template_debug.arm64.so"
-linux.arm64.editor = "res://addons/sceneio/bin/libsceneio.linux.editor.arm64.so"
