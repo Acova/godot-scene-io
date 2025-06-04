@@ -1,18 +1,8 @@
 name: Extension Build
 on:
-  workflow_call:
-    inputs:
-      godot-scene-io:
-        description: Push to the master branch of the SceneIO repository
-        type: string
-        default: main
-
-  workflow_dispatch:
-    inputs:
-      godot-scene-io:
-        description: Push to the master branch of the SceneIO repository
-        type: string
-        default: main
+  push:
+    branches:
+      - 'main'
 
 jobs:
   build:
