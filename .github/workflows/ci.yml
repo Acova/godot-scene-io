@@ -86,9 +86,3 @@ jobs:
         run: |
           python -c "import sys; print(sys.version)"
           python -m pip install scons==4.4.0
-      
-      - name: Set up MinGW
-        uses: egor-tensin/setup-mingw@v2
-
-      - name: Build the extension
-        run: scons platform=${{matrix.platform}} target=${{matrix.target}} ${{matrix.flags}}
