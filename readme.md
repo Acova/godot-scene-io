@@ -1,24 +1,57 @@
-# Godot Scene IO
+# 🚀 Godot Scene IO
 
-Godot Secene IO is a Godot Plugin that allows you to export/import a scene, and it's direct dependencies, between Godot projects.
+[![Godot](https://img.shields.io/badge/Godot-Plugin-blue?logo=godot-engine)](https://godotengine.org/)
+[![Status](https://img.shields.io/badge/status-alpha-orange)](#)
+[![License](https://img.shields.io/badge/license-MIT-green)](#)
 
-This is an alpha version, still work in progress, and need a lot of testing, but I have successfully tried a few scenarios with simple scenes.
+**Godot Scene IO** is a Godot plugin that lets you easily **export/import scenes and their direct dependencies between Godot projects**.
 
-If you want to use it, you can go to the relases and download the last version.
+> ⚠️ **Alpha Version:**  
+> This plugin is a work in progress and needs more testing. It works for simple scenes, but please report any issues!
 
-To use it, once installed, in the Godot editor, right click on the scene you want to export and selecet the option "Export Scene".
+---
 
-If it does not exist, a new folder will be created in the project's rootfolder, called `exported_scenes`. There, a new file with the same name as the exported scene and the extension `.gpackage` will appear. This is your exported scene.
+## ✨ Features
 
-You can copy it into another project, there, in the Godot Editor, right click the `.gpackage` file and select the "Import Scene" option.
+- Export a scene and its dependencies as a `.gpackage` file
+- Import scenes into other Godot projects
+- Keeps original folder structure
 
-The scene an it's dependencies will be exported into the project, in the same paths as in the original project.
+---
 
-# TODO
+## 📦 Installation
 
-There are many things I want to improve in this addon, this includes:
-- Allow the user to select the path where they want to export the scene.
-- Inform the user, when importing a scene, of the new files and folders that will be created, and of the conflicts.
-- Related to the previous feature, in the case of a conflict, allow the user to specify a new path for the conflicting file.
-- Redirect the scene's dependencies into a new folder, so they can be all imported into the same folder.
-- Give, generally, more information to the user about what is happening.
+1. Download the latest release from the [Releases](#) page.
+2. Install the plugin in your Godot project.
+
+---
+
+## 🚚 Usage
+
+1. **Export a Scene:**  
+   In the Godot editor, right-click the scene you want to export and select **Export Scene**.
+
+2. **Find Your Export:**  
+   A new folder called `exported_scenes` will appear in your project root. Your exported scene will be saved as a `.gpackage` file.
+
+3. **Import into Another Project:**  
+   Copy the `.gpackage` file into another project. In the Godot editor, right-click the file and select **Import Scene**.
+
+4. **Done!**  
+   The scene and its dependencies will be imported, preserving their original paths.
+
+---
+
+## 📝 TODO
+
+- [ ] Allow users to select export paths
+- [ ] Show a summary of files/folders to be created or overwritten on import
+- [ ] Handle conflicts and let users choose new paths for conflicting files
+- [ ] Option to redirect dependencies into a new folder
+- [ ] Provide more feedback and information during import/export
+
+---
+
+## 🙏 Contributing
+
+Feedback, bug reports, and pull requests are welcome!
