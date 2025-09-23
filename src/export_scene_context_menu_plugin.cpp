@@ -55,7 +55,6 @@ PackedStringArray _get_dependencies_for_path(const String &p_path) {
 void ExportSceneContextMenuPlugin::export_scene(const PackedStringArray &p_paths) {
     String selected_path = p_paths.get(0);
     String scene_name = selected_path.get_file().trim_suffix(".tscn");
-    // String export_path = export_dir + "/" + scene_name + ".gpackage";
     file_dialog = memnew(EditorFileDialog);
     file_dialog->set_access(EditorFileDialog::ACCESS_FILESYSTEM);
     file_dialog->set_file_mode(EditorFileDialog::FILE_MODE_SAVE_FILE);
@@ -64,35 +63,31 @@ void ExportSceneContextMenuPlugin::export_scene(const PackedStringArray &p_paths
     file_dialog->connect("file_selected", Callable(this, "_on_file_path_selected"));
     EditorInterface *editor = EditorInterface::get_singleton();
     editor->get_editor_main_screen()->add_child(file_dialog);
-    // editor->get_editor_main_screen()->add_child(file_dialog.ptr());
     file_dialog->popup_file_dialog();
-    // String export_dir = "res://exported_scenes";
-    // DirAccess::make_dir_recursive_absolute(export_dir);
-    // print_line("Path del fichero: " + export_path);
-    // Ref<ZIPPacker> zip_packer;
-    // zip_packer.instantiate();
-    // Error err = zip_packer->open(export_path, ZIPPacker::APPEND_CREATE);
-    // if (err != Error::OK) {
-    //     print_error("Error intentando abrir el archivo en ZIP");
-    //     return;
-    // }
-
-    // PackedStringArray dependencies = _get_dependencies_for_path(selected_path);
-    // for (int i = 0; i < dependencies.size(); ++i) {
-    //     String file_path = dependencies[i];
-    //     Ref<FileAccess> file_access = FileAccess::open(file_path, FileAccess::READ);
-    //     PackedByteArray file_contents = file_access->get_buffer(file_access->get_length());
-    //     zip_packer->start_file(file_path.substr(String("res://").length(), file_path.length()));
-    //     zip_packer->write_file(file_contents);
-    //     zip_packer->close_file();
-    //     file_access->close();
-    // }
-    
-    // zip_packer->close();
 }
 
 void ExportSceneContextMenuPlugin::_on_file_path_selected(const String &p_path) {
     print_line("Selected path: " + p_path);
+    Ref<ZIPPacker> zip_packer;
+    zip_packer.instantiate();
+    Error err = zip_packer->open(p_path, ZIPPacker::APPEND_CREATE);
+    if (err != Error::OK) {
+        print_error("Error intentando abrir el archivo en ZIP");
+        return;
+    }
+
+    PackedStringArray dependencies = _get_dependencies_for_path(p_path);
+    for (int i = 0; i < dependencies.size(); ++i) {
+        String file_path = dependencies[i];
+        Ref<FileAccess> file_access = FileAccess::open(file_path, FileAccess::READ);
+        PackedByteArray file_contents = file_access->get_buffer(file_access->get_length());
+        zip_packer->start_file(file_path.substr(String("res://").length(), file_path.length()));
+        zip_packer->write_file(file_contents);
+        zip_packer->close_file();
+        file_access->close();
+    }
+    
+    zip_packer->close();
 }
 
 bool should_show_export_option(const PackedStringArray &p_paths) {

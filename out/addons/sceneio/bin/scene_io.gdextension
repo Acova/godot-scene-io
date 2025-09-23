@@ -8,8 +8,8 @@ compatibility_minimum = "4.1"
 macos.debug = "res://addons/sceneio/addons/sceneio/bin/libsceneio.macos.template_debug.dylib"
 macos.editor = "res://addons/sceneio/bin/libsceneio.macos.editor.dylib"
 
-windows.x86_64.debug = "res://addons/sceneio/bin/libsceneio.windows.template_debug.x86_64.dll"
-windows.x86_64.editor = "res://addons/sceneio/bin/libsceneio.windows.editor.x86_64.dll"
+windows.x86_64.debug = "res://addons/sceneio/bin/sceneio.windows.template_debug.x86_64.dll"
+windows.x86_64.editor = "res://addons/sceneio/bin/sceneio.windows.editor.x86_64.dll"
 
 linux.x86_64.debug = "res://addons/sceneio/bin/libsceneio.linux.template_debug.x86_64.so"
 linux.x86_64.editor = "res://addons/sceneio/bin/libsceneio.linux.editor.x86_64.so"
