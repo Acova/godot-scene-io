@@ -63,6 +63,7 @@ void ExportSceneContextMenuPlugin::export_scene(const PackedStringArray &p_paths
     file_dialog->set_current_file(scene_name + ".gpackage");
     file_dialog->connect("file_selected", Callable(this, "_on_file_path_selected"));
     EditorInterface *editor = EditorInterface::get_singleton();
+    editor->get_editor_main_screen()->add_child(file_dialog);
     // editor->get_editor_main_screen()->add_child(file_dialog.ptr());
     file_dialog->popup_file_dialog();
     // String export_dir = "res://exported_scenes";
