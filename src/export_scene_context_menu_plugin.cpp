@@ -1,5 +1,7 @@
 #include "export_scene_context_menu_plugin.hpp"
 
+#include <godot_cpp/classes/accept_dialog.hpp>
+#include <godot_cpp/classes/button.hpp>
 #include <godot_cpp/classes/dir_access.hpp>
 #include <godot_cpp/classes/editor_interface.hpp>
 #include <godot_cpp/classes/file_access.hpp>
@@ -59,15 +61,24 @@ void ExportSceneContextMenuPlugin::export_scene(const PackedStringArray &p_paths
     file_dialog->set_access(EditorFileDialog::ACCESS_FILESYSTEM);
     file_dialog->set_file_mode(EditorFileDialog::FILE_MODE_SAVE_FILE);
     file_dialog->set_filters(PackedStringArray{"*.gpackage ; GPackage files"});
-    file_dialog->set_current_file(scene_name + ".gpackage");
-    file_dialog->connect("file_selected", Callable(this, "_on_file_path_selected"));
+    file_dialog->connect("file_selected", Callable(this, "_on_file_path_selected").bind(selected_path));
     EditorInterface *editor = EditorInterface::get_singleton();
     editor->get_editor_main_screen()->add_child(file_dialog);
+    file_dialog->set_current_file(scene_name + ".gpackage");
     file_dialog->popup_file_dialog();
 }
 
-void ExportSceneContextMenuPlugin::_on_file_path_selected(const String &p_path) {
-    print_line("Selected path: " + p_path);
+void show_confirmation(const String &exported_path) {
+    AcceptDialog *dialog = memnew(AcceptDialog);
+    dialog->set_title("Scene Exported");
+    dialog->set_text("The scene has been exported to: " + exported_path);
+    dialog->get_ok_button()->set_text("OK");
+    EditorInterface *editor = EditorInterface::get_singleton();
+    editor->get_editor_main_screen()->add_child(dialog);
+    dialog->popup_centered();
+}
+
+void ExportSceneContextMenuPlugin::_on_file_path_selected(const String &p_path, const String &selected_path) {
     Ref<ZIPPacker> zip_packer;
     zip_packer.instantiate();
     Error err = zip_packer->open(p_path, ZIPPacker::APPEND_CREATE);
@@ -76,7 +87,7 @@ void ExportSceneContextMenuPlugin::_on_file_path_selected(const String &p_path) 
         return;
     }
 
-    PackedStringArray dependencies = _get_dependencies_for_path(p_path);
+    PackedStringArray dependencies = _get_dependencies_for_path(selected_path);
     for (int i = 0; i < dependencies.size(); ++i) {
         String file_path = dependencies[i];
         Ref<FileAccess> file_access = FileAccess::open(file_path, FileAccess::READ);
@@ -88,6 +99,7 @@ void ExportSceneContextMenuPlugin::_on_file_path_selected(const String &p_path) 
     }
     
     zip_packer->close();
+    show_confirmation(p_path);
 }
 
 bool should_show_export_option(const PackedStringArray &p_paths) {

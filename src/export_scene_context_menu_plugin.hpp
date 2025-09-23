@@ -20,7 +20,7 @@ public:
     virtual void _popup_menu(const PackedStringArray &p_paths) override;
 
     void export_scene(const PackedStringArray &p_paths);
-    void _on_file_path_selected(const String &p_path);
+    void _on_file_path_selected(const String &p_path, const String &exported_path);
 };
 
 #endif
