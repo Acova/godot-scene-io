@@ -49,6 +49,7 @@
 - [ ] Handle conflicts and let users choose new paths for conflicting files
 - [ ] Option to redirect dependencies into a new folder
 - [ ] Provide more feedback and information during import/export
+- [ ] Location to other languages
 
 ---
 
