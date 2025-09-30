@@ -6,9 +6,11 @@
 #include <godot_cpp/classes/editor_interface.hpp>
 #include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/classes/packed_scene.hpp>
+#include <godot_cpp/classes/scene_state.hpp>
 #include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/classes/zip_packer.hpp>
 #include <godot_cpp/classes/v_box_container.hpp>
+#include <godot_cpp/classes/script.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/templates/hash_set.hpp>
 
@@ -17,6 +19,44 @@ using namespace godot;
 void ExportSceneContextMenuPlugin::_bind_methods() {
     ClassDB::bind_method(D_METHOD("export_scene"), &ExportSceneContextMenuPlugin::export_scene);
     ClassDB::bind_method(D_METHOD("_on_file_path_selected"), &ExportSceneContextMenuPlugin::_on_file_path_selected);
+}
+
+String _get_base_class_dependency(const String &p_path) {
+    if (p_path.get_extension() == "gd") {
+        Ref<Script> script = ResourceLoader::get_singleton()->load(p_path);
+        if (!script.is_valid()) {
+            print_error("Error loading script: " + p_path);
+            return "";
+        }
+
+        Ref<Script> base_script = script->get_base_script();
+        if (!base_script.is_valid()) {
+            print_line("No base class for script: " + p_path);
+            return "";
+        }
+
+        String base_path = base_script->get_path();
+        if (base_path.is_empty()) {
+            print_line("Base class is built-in for script: " + p_path);
+            return "";
+        }
+        print_line("Base class: " + base_script->get_path());
+    }
+
+    if (p_path.get_extension() == "tscn") {
+        Ref<PackedScene> scene = ResourceLoader::get_singleton()->load(p_path);
+        if (!scene.is_valid()) {
+            print_error("Error loading scene: " + p_path);
+            return "";
+        }
+
+        print_line("Scene class: " + scene->get_class());
+
+        Node *scene_node = scene->instantiate();
+        print_line("Node type: " + scene_node->get_class());
+    }
+
+    return "";
 }
 
 void _get_dependencies_for_path_recursive(const String &p_path, PackedStringArray &r_collected_paths, PackedStringArray &r_visited_paths) {
@@ -31,11 +71,13 @@ void _get_dependencies_for_path_recursive(const String &p_path, PackedStringArra
 
     r_collected_paths.push_back(p_path);
     r_visited_paths.push_back(p_path);
+    print_line("Visiting: " + p_path);
 
     // First, we include all direct dependencies
     PackedStringArray direct_dependencies = ResourceLoader::get_singleton()->get_dependencies(p_path);
     for (int i = 0; i < direct_dependencies.size(); ++i) {
         String dependency = direct_dependencies[i];
+        print_line("Direct dependency: " + dependency);
         String dependency_path = dependency.substr(dependency.find("res://"));
         if (!dependency_path.is_empty()) {
             _get_dependencies_for_path_recursive(dependency_path, r_collected_paths, r_visited_paths);
@@ -43,6 +85,28 @@ void _get_dependencies_for_path_recursive(const String &p_path, PackedStringArra
     }
 
     // TODO: For now, we will only copy the basic dependencies
+    if (p_path.get_extension() == "gd") {
+        Ref<Script> script = ResourceLoader::get_singleton()->load(p_path);
+        if (!script.is_valid()) {
+            print_error("Error loading script: " + p_path);
+            return;
+        }
+
+        Ref<Script> base_script = script->get_base_script();
+        if (!base_script.is_valid()) {
+            print_error("No base class for script: " + p_path);
+            return;
+        }
+
+        String base_path = base_script->get_path();
+        if (base_path.is_empty()) {
+            print_error("Base class is built-in for script: " + p_path);
+            return;
+        }
+        
+        print_line("Indirect dependency (base class for script): " + base_path);
+        _get_dependencies_for_path_recursive(base_path, r_collected_paths, r_visited_paths);
+    }
 }
 
 PackedStringArray _get_dependencies_for_path(const String &p_path) {
@@ -57,6 +121,7 @@ PackedStringArray _get_dependencies_for_path(const String &p_path) {
 void ExportSceneContextMenuPlugin::export_scene(const PackedStringArray &p_paths) {
     String selected_path = p_paths.get(0);
     String scene_name = selected_path.get_file().trim_suffix(".tscn");
+    
     file_dialog = memnew(EditorFileDialog);
     file_dialog->set_access(EditorFileDialog::ACCESS_FILESYSTEM);
     file_dialog->set_file_mode(EditorFileDialog::FILE_MODE_SAVE_FILE);
@@ -68,7 +133,7 @@ void ExportSceneContextMenuPlugin::export_scene(const PackedStringArray &p_paths
     file_dialog->popup_file_dialog();
 }
 
-void show_confirmation(const String &exported_path) {
+void _show_confirmation(const String &exported_path) {
     AcceptDialog *dialog = memnew(AcceptDialog);
     dialog->set_title("Scene Exported");
     dialog->set_text("The scene has been exported to: " + exported_path);
@@ -99,7 +164,7 @@ void ExportSceneContextMenuPlugin::_on_file_path_selected(const String &p_path, 
     }
     
     zip_packer->close();
-    show_confirmation(p_path);
+    _show_confirmation(p_path);
 }
 
 bool should_show_export_option(const PackedStringArray &p_paths) {
